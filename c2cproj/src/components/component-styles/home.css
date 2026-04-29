@@ -1,0 +1,10 @@
+.poke-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.poke-info img {
+  width: 50%;
+  height: auto;
+}
