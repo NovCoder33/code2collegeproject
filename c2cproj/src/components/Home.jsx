@@ -2,47 +2,14 @@ import { useState } from "react";
 
 import source from "../assets/pokeball.jpg";
 import "./component-styles/home.css";
+import fetchPokemon from "./fetchPokemon";
+import devolvePokemon from "../devolvePokemon";
+import evolvePokemon from "../evolvePokemon";
 var evolutions = [];
-const fetchPokemon = (text, setData) => {
-  console.log(text);
-  fetch(`https://pokeapi.co/api/v2/pokemon/${text.toLowerCase()}`)
-    .then((response) => {
-      if (response.ok == false) {
-        throw new Error("Pokemon could not be fetched!");
-      } else {
-        return response.json();
-      }
-    })
-    .then((data) => {
-      console.log(data);
-      setData(data);
-    })
-    .catch((error) => {
-      console.log("Error detected: " + error);
-    });
-};
 
 const Home = () => {
   const [input, setInput] = useState();
   const [data, setData] = useState();
-
-  const devolvePokemon = () => {
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${data.name}/`)
-      .then((response) => {
-        if (response.ok == false) {
-          throw new Error("Evolution could not be fetched!");
-        } else {
-          return response.json();
-        }
-      })
-      .then((dta) => {
-        console.log(dta.evolves_from_species?.name);
-        if (dta.evolves_from_species?.name != undefined) {
-          fetchPokemon(dta.evolves_from_species?.name, setData);
-        }
-      })
-      .catch((error) => console.log("Error detected: " + error));
-  };
 
   const display = (dta) => {
     var str = "";
@@ -61,53 +28,12 @@ const Home = () => {
     }
     return str.substring(0, str.length - 2);
   };
-  const evolvePokemon = () => {
-    evolutions = [];
-    evolutions.push(data.species.name);
 
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${data.id}/`)
-      .then((response) => {
-        if (response.ok == false) {
-          throw new Error("Evolution could not be fetched!");
-        } else {
-          return response.json();
-        }
-      })
-      .then((dta) =>
-        fetch(dta.evolution_chain.url)
-          .then((response) => {
-            if (response.ok == false) {
-              throw new Error("Evolution could not be fetched!");
-            } else {
-              return response.json();
-            }
-          })
-          .then((dta) => {
-            console.log("MADE IT HERE");
-            var currentEvolutionPointer = dta.chain.evolves_to[0];
-            console.log(dta.chain.evolves_to);
-            evolutions.push(currentEvolutionPointer.species.name);
-
-            while (currentEvolutionPointer.evolves_to.length > 0) {
-              currentEvolutionPointer = currentEvolutionPointer.evolves_to[0];
-
-              console.log(currentEvolutionPointer.species.name);
-              evolutions.push(currentEvolutionPointer.species.name);
-            }
-            console.log(evolutions);
-            fetchPokemon(
-              evolutions.at(evolutions.lastIndexOf(data.species.name) + 1),
-              setData,
-            );
-          }),
-      )
-      .catch((error) => console.log("Error detected: " + error));
-  };
   return (
     <div className="main-container">
       <Search input={input} setInput={setInput} setData={setData}></Search>
       <div className="poke-container">
-        <button onClick={() => devolvePokemon()}> Devolve </button>
+        <button onClick={() => devolvePokemon(data, setData)}> Devolve </button>
         <div className="poke-info">
           <img
             src={data != null ? data.sprites.front_default : source}
@@ -124,7 +50,10 @@ const Home = () => {
           <p>{data != null ? display("types") : "Types"}</p>
         </div>
 
-        <button onClick={() => evolvePokemon()}> Evolve </button>
+        <button onClick={() => evolvePokemon(evolutions, data, setData)}>
+          {" "}
+          Evolve{" "}
+        </button>
       </div>
     </div>
   );
