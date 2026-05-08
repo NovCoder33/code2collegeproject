@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import source from "../assets/pikachu.png";
+import source from "../assets/pokeball.jpg";
 import "./component-styles/home.css";
 var evolutions = [];
 const fetchPokemon = (text, setData) => {
@@ -115,7 +115,12 @@ const Home = () => {
           ></img>
           <p>{data != null ? data.species.name : "Pokemon"}</p>
           <p>{data != null ? display("abilities") : "Abilities"}</p>
-          <p>{data != null ? display("moves") : "Moves"}</p>
+          <details className="moves-scroll">
+            <summary>Moves</summary>
+            <div className="moves-list">
+              {data != null ? display("moves") : "—"}
+            </div>
+          </details>{" "}
           <p>{data != null ? display("types") : "Types"}</p>
         </div>
 
