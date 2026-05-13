@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import source from "../assets/pokeball.jpg";
 import "./component-styles/home.css";
-import fetchPokemon from "./fetchPokemon";
+import fetchPokemon from "../fetchPokemon";
 import devolvePokemon from "../devolvePokemon";
 import evolvePokemon from "../evolvePokemon";
 var evolutions = [];
